@@ -2,6 +2,45 @@
 
 A modern, responsive library management system built with Vue 3, TypeScript, and Vite.
 
+## Quick Start
+
+### Prerequisites
+- Node.js (v18 or higher)
+- npm or yarn
+- Backend API running (see [Backend README](../LibraryManagement.Api/README.md))
+
+### Setup and Run (3 minutes)
+
+1. **Navigate to the frontend directory:**
+   ```bash
+   cd library-management
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Ensure the backend API is running:**
+   - The API should be running on `http://localhost:5150`
+   - See [Backend README](../LibraryManagement.Api/README.md) for setup instructions
+
+4. **Start the development server:**
+   ```bash
+   npm run dev
+   ```
+
+5. **Open your browser:**
+   - The app will be available at `http://localhost:5173`
+   - Vite will automatically open it, or you can navigate manually
+
+The frontend is now running! 🎉
+
+**Note**: If you see connection errors, make sure:
+- The backend API is running on port 5150
+- SQL Server is running and database is set up
+- Check browser console for specific error messages
+
 ## Features
 
 - **Books Management**: Browse, search, create, update, and delete books
@@ -29,15 +68,21 @@ cd library-management
 
 ### 2. Install dependencies
 
-Using npm:
+**Using npm:**
 ```bash
 npm install
 ```
 
-Or using yarn:
+**Or using yarn:**
 ```bash
 yarn install
 ```
+
+**Verify installation:**
+After installation, you should see a `node_modules` directory created. If you encounter errors:
+- Check Node.js version: `node --version` (should be v18+)
+- Clear npm cache: `npm cache clean --force`
+- Delete `node_modules` and `package-lock.json`, then run `npm install` again
 
 ## Configuration
 
@@ -58,7 +103,7 @@ VITE_API_BASE_URL=http://localhost:5150/api
 
 ### Development Mode
 
-Start the development server:
+**Start the development server:**
 
 ```bash
 npm run dev
@@ -69,14 +114,38 @@ Or using yarn:
 yarn dev
 ```
 
-The application will be available at:
+**The application will be available at:**
 - `http://localhost:5173` (default Vite port)
+- Vite will automatically open your browser, or you can navigate manually
 
-The dev server supports hot module replacement (HMR), so changes will be reflected immediately.
+**Features:**
+- Hot Module Replacement (HMR) - changes reflect immediately
+- Fast refresh - components update without losing state
+- TypeScript type checking
+- Error overlay in browser
+
+**Verify it's working:**
+1. Open `http://localhost:5173` in your browser
+2. You should see the Library Management System home page
+3. Navigate to different sections (Books, Authors, Members, Borrowings)
+4. If you see loading spinners or errors, check that the backend API is running
+
+**Note**: Make sure the backend API is running before starting the frontend, otherwise you'll see connection errors.
+
+### Stop the Development Server
+
+Press `Ctrl+C` in the terminal where the dev server is running.
+
+### Restart the Development Server
+
+```bash
+# Stop with Ctrl+C, then:
+npm run dev
+```
 
 ### Build for Production
 
-To build the application for production:
+**Build the application:**
 
 ```bash
 npm run build
@@ -87,11 +156,23 @@ Or using yarn:
 yarn build
 ```
 
-The production build will be created in the `dist/` directory.
+**Output:**
+- Production build will be created in the `dist/` directory
+- Files are optimized and minified
+- Ready for deployment to any static hosting service
+
+**Build options:**
+```bash
+# Build with detailed output
+npm run build -- --mode production
+
+# Build for staging
+npm run build -- --mode staging
+```
 
 ### Preview Production Build
 
-To preview the production build locally:
+**Test the production build locally:**
 
 ```bash
 npm run preview
@@ -101,6 +182,11 @@ Or using yarn:
 ```bash
 yarn preview
 ```
+
+**This will:**
+- Serve the production build from the `dist/` directory
+- Available at `http://localhost:4173` (default preview port)
+- Useful for testing the production build before deployment
 
 ## Project Structure
 
@@ -164,11 +250,48 @@ library-management/
 
 ### Cannot connect to API
 
-If you see connection errors:
+**Symptoms**: "Network error", "Cannot connect to API", blank pages, loading forever
 
-1. **Check if the backend is running**: Ensure the Library Management API is running on the configured port (default: `http://localhost:5150`)
-2. **Verify API URL**: Check your `.env` file or `src/utils/constants.ts` for the correct API base URL
-3. **Check CORS settings**: Ensure the backend CORS policy allows requests from your frontend URL (default: `http://localhost:5173`)
+**Solutions:**
+
+1. **Verify backend API is running:**
+   ```bash
+   # Check if API responds
+   curl http://localhost:5150/health
+   # Or open in browser: http://localhost:5150/swagger
+   ```
+
+2. **Start the backend API if it's not running:**
+   ```bash
+   cd ../LibraryManagement.Api
+   dotnet run
+   # Should see: "Now listening on: http://localhost:5150"
+   ```
+
+3. **Check API URL configuration:**
+   - Default: `http://localhost:5150/api`
+   - Check `src/utils/constants.ts` or `.env` file
+   - Ensure it matches your backend port
+
+4. **Verify CORS is configured:**
+   - Backend should allow `http://localhost:5173`
+   - Check `LibraryManagement.Api/Program.cs` for CORS configuration
+
+5. **Check browser console:**
+   - Open DevTools (F12)
+   - Look for error messages in Console tab
+   - Check Network tab for failed requests
+
+6. **Restart both frontend and backend:**
+   ```bash
+   # Terminal 1 - Backend
+   cd LibraryManagement.Api
+   dotnet run
+   
+   # Terminal 2 - Frontend
+   cd library-management
+   npm run dev
+   ```
 
 ### Port already in use
 

@@ -5,7 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+builder.Logging.SetMinimumLevel(LogLevel.Information);
+
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(options =>
     {
@@ -19,8 +23,10 @@ builder.Services.AddControllers()
 
             return new BadRequestObjectResult(new
             {
+                success = false,
                 message = "Validation failed",
-                errors = errors
+                errors = errors,
+                timestamp = DateTime.UtcNow
             });
         };
     });
@@ -35,16 +41,10 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// Add Linq2DB DataContext as scoped service
 builder.Services.AddScoped<LibraryDbContext>();
-
-// Add services
 builder.Services.AddScoped<IBookService, BookService>();
-
-// Add health checks
 builder.Services.AddHealthChecks();
 
-// Add CORS for frontend
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowVueApp", policy =>
@@ -58,27 +58,44 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
-if (app.Environment.IsDevelopment())
+app.UseMiddleware<RequestLoggingMiddleware>();
+
+app.Use(async (context, next) =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Library Management API v1");
-        c.RoutePrefix = string.Empty; // Set Swagger UI at the app's root
-    });
-}
+    context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+    context.Response.Headers.Append("X-Frame-Options", "DENY");
+    context.Response.Headers.Append("X-XSS-Protection", "1; mode=block");
+    context.Response.Headers.Append("Referrer-Policy", "strict-origin-when-cross-origin");
+    context.Response.Headers.Remove("Server");
+    
+    await next();
+});
 
-// Add global exception handling middleware
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Library Management API v1");
+    c.RoutePrefix = "swagger";
+    c.DisplayRequestDuration();
+    c.EnableTryItOutByDefault();
+});
+
 app.UseMiddleware<ExceptionHandlingMiddleware>();
-
-app.UseHttpsRedirection();
 app.UseCors("AllowVueApp");
+app.UseAuthentication();
 app.UseAuthorization();
-
-// Health check endpoint
 app.MapHealthChecks("/health");
-
 app.MapControllers();
 
-app.Run();
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+logger.LogInformation("Library Management API starting up");
+
+try
+{
+    app.Run();
+}
+catch (Exception ex)
+{
+    logger.LogCritical(ex, "Application terminated unexpectedly");
+    throw;
+}

@@ -1,7 +1,4 @@
-import { API_CONFIG } from '../utils/constants';
-import { handleApiError } from '../utils/errorHandler';
-
-const API_BASE_URL = API_CONFIG.BASE_URL;
+import { httpClient } from './httpClient';
 
 export interface Book {
   id: number;
@@ -105,177 +102,92 @@ export interface ReturnBookDto {
   borrowingId: number;
 }
 
-async function handleResponse<T>(response: Response): Promise<T> {
-  if (!response.ok) {
-    await handleApiError(response);
-  }
-
-  // Handle 204 No Content
-  if (response.status === 204) {
-    return undefined as T;
-  }
-
-  try {
-    return await response.json();
-  } catch {
-    return undefined as T;
-  }
-}
-
 export const api = {
   // Books
   async getBooks(): Promise<Book[]> {
-    try {
-      const response = await fetch(`${API_BASE_URL}/Books`);
-      return handleResponse<Book[]>(response);
-    } catch (error) {
-      if (error instanceof TypeError && error.message.includes('fetch')) {
-        throw new Error(`Cannot connect to API at ${API_BASE_URL}. Is the backend server running?`);
-      }
-      throw error;
-    }
+    return httpClient.get<Book[]>('/Books');
   },
 
   async getBook(id: number): Promise<Book> {
-    const response = await fetch(`${API_BASE_URL}/Books/${id}`);
-    return handleResponse<Book>(response);
+    return httpClient.get<Book>(`/Books/${id}`);
   },
 
   async createBook(dto: CreateBookDto): Promise<Book> {
-    const response = await fetch(`${API_BASE_URL}/Books`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(dto),
-    });
-    return handleResponse<Book>(response);
+    return httpClient.post<Book>('/Books', dto);
   },
 
   async updateBook(id: number, dto: UpdateBookDto): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/Books/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(dto),
-    });
-    return handleResponse<void>(response);
+    return httpClient.put<void>(`/Books/${id}`, dto);
   },
 
   async deleteBook(id: number): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/Books/${id}`, {
-      method: 'DELETE',
-    });
-    return handleResponse<void>(response);
+    return httpClient.delete<void>(`/Books/${id}`);
   },
 
   // Authors
   async getAuthors(): Promise<Author[]> {
-    const response = await fetch(`${API_BASE_URL}/Authors`);
-    return handleResponse<Author[]>(response);
+    return httpClient.get<Author[]>('/Authors');
   },
 
   async getAuthor(id: number): Promise<Author> {
-    const response = await fetch(`${API_BASE_URL}/Authors/${id}`);
-    return handleResponse<Author>(response);
+    return httpClient.get<Author>(`/Authors/${id}`);
   },
 
   async createAuthor(dto: CreateAuthorDto): Promise<Author> {
-    const response = await fetch(`${API_BASE_URL}/Authors`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(dto),
-    });
-    return handleResponse<Author>(response);
+    return httpClient.post<Author>('/Authors', dto);
   },
 
   async updateAuthor(id: number, dto: UpdateAuthorDto): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/Authors/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(dto),
-    });
-    return handleResponse<void>(response);
+    return httpClient.put<void>(`/Authors/${id}`, dto);
   },
 
   async deleteAuthor(id: number): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/Authors/${id}`, {
-      method: 'DELETE',
-    });
-    return handleResponse<void>(response);
+    return httpClient.delete<void>(`/Authors/${id}`);
   },
 
   // Members
   async getMembers(): Promise<Member[]> {
-    const response = await fetch(`${API_BASE_URL}/Members`);
-    return handleResponse<Member[]>(response);
+    return httpClient.get<Member[]>('/Members');
   },
 
   async getMember(id: number): Promise<Member> {
-    const response = await fetch(`${API_BASE_URL}/Members/${id}`);
-    return handleResponse<Member>(response);
+    return httpClient.get<Member>(`/Members/${id}`);
   },
 
   async createMember(dto: CreateMemberDto): Promise<Member> {
-    const response = await fetch(`${API_BASE_URL}/Members`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(dto),
-    });
-    return handleResponse<Member>(response);
+    return httpClient.post<Member>('/Members', dto);
   },
 
   async updateMember(id: number, dto: UpdateMemberDto): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/Members/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(dto),
-    });
-    return handleResponse<void>(response);
+    return httpClient.put<void>(`/Members/${id}`, dto);
   },
 
   async deleteMember(id: number): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/Members/${id}`, {
-      method: 'DELETE',
-    });
-    return handleResponse<void>(response);
+    return httpClient.delete<void>(`/Members/${id}`);
   },
 
   // Borrowings
   async getBorrowings(): Promise<Borrowing[]> {
-    const response = await fetch(`${API_BASE_URL}/Borrowings`);
-    return handleResponse<Borrowing[]>(response);
+    return httpClient.get<Borrowing[]>('/Borrowings');
   },
 
   async getBorrowing(id: number): Promise<Borrowing> {
-    const response = await fetch(`${API_BASE_URL}/Borrowings/${id}`);
-    return handleResponse<Borrowing>(response);
+    return httpClient.get<Borrowing>(`/Borrowings/${id}`);
   },
 
   async getBorrowingsByMember(memberId: number): Promise<Borrowing[]> {
-    const response = await fetch(`${API_BASE_URL}/Borrowings/member/${memberId}`);
-    return handleResponse<Borrowing[]>(response);
+    return httpClient.get<Borrowing[]>(`/Borrowings/member/${memberId}`);
   },
 
   async createBorrowing(dto: CreateBorrowingDto): Promise<Borrowing> {
-    const response = await fetch(`${API_BASE_URL}/Borrowings`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(dto),
-    });
-    return handleResponse<Borrowing>(response);
+    return httpClient.post<Borrowing>('/Borrowings', dto);
   },
 
   async returnBook(dto: ReturnBookDto): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/Borrowings/return`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(dto),
-    });
-    return handleResponse<void>(response);
+    return httpClient.post<void>('/Borrowings/return', dto);
   },
 
   async deleteBorrowing(id: number): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/Borrowings/${id}`, {
-      method: 'DELETE',
-    });
-    return handleResponse<void>(response);
+    return httpClient.delete<void>(`/Borrowings/${id}`);
   },
 };

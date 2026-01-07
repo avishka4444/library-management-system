@@ -44,9 +44,6 @@ project.lock.json
 project.fragment.lock.json
 artifacts/
 
-# ASP.NET Scaffolding
-ScaffoldingReadMe.txt
-
 # Files built by Visual Studio
 *_i.c
 *_p.c
@@ -105,27 +102,11 @@ _ReSharper*/
 __pycache__/
 *.pyc
 
-# Cake - Uncomment if you are using it
-# tools/**
-# !tools/packages.config
-
 # Tabs Studio
 *.tss
 
 # Telerik's JustMock configuration file
 *.jmconfig
-
-# BizTalk build output
-*.btp.cs
-*.btm.cs
-*.odx.cs
-*.xsd.cs
-
-# OpenCover UI analysis results
-OpenCover/
-
-# Azure Stream Analytics local run output
-ASALocalRun/
 
 # MSBuild Binary and Structured Log
 *.binlog
@@ -138,9 +119,6 @@ ASALocalRun/
 
 # Local History for Visual Studio
 .localhistory/
-
-# BeatPulse healthcheck temp database
-healthchecksdb
 
 # Backup folder for Package Reference Convert tool in Visual Studio 2017
 MigrationBackup/
@@ -161,12 +139,10 @@ FodyWeavers.xsd
 *.msm
 *.msp
 
-# Uploaded files
-wwwroot/uploads/**/*
-!wwwroot/uploads/**/.gitkeep
+# Test results
+TestResults/
+[Tt]est[Rr]esult*/
+*.trx
+*.coverage
+*.coveragexml
 
-# User secrets
-secrets.json
-
-# App settings (development)
-appsettings.Development.json

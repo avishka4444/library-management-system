@@ -2,6 +2,56 @@
 
 A RESTful API for managing a library system built with ASP.NET Core, SQL Server, and Linq2DB.
 
+## Quick Start
+
+### Prerequisites
+- .NET 9.0 SDK
+- Docker Desktop (for SQL Server)
+
+### Setup and Run (5 minutes)
+
+1. **Start SQL Server with Docker:**
+   ```bash
+   docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=YourStrong@Passw0rd" \
+     -e "MSSQL_PID=Developer" -p 1433:1433 --name library-sqlserver \
+     -d mcr.microsoft.com/mssql/server:2022-latest
+   ```
+
+2. **Wait for SQL Server to be ready (about 30 seconds):**
+   ```bash
+   docker logs -f library-sqlserver
+   # Press Ctrl+C when you see "SQL Server is now ready for client connections"
+   ```
+
+3. **Create database and tables:**
+   ```bash
+   # Option 1: Using SQL Server Management Studio or Azure Data Studio
+   # Connect to: localhost,1433 | sa | YourStrong@Passw0rd
+   # Run the script: LibraryManagement.Api/Scripts/CreateTables.sql
+   
+   # Option 2: Using docker exec (if sqlcmd is available)
+   docker exec -i library-sqlserver /opt/mssql-tools/bin/sqlcmd \
+     -S localhost -U sa -P "YourStrong@Passw0rd" -C \
+     -i /path/to/CreateTables.sql
+   ```
+
+4. **Navigate to project and restore packages:**
+   ```bash
+   cd LibraryManagement.Api
+   dotnet restore
+   ```
+
+5. **Run the API:**
+   ```bash
+   dotnet run
+   ```
+
+6. **Verify it's working:**
+   - Open browser: `http://localhost:5150/swagger`
+   - Or test health endpoint: `http://localhost:5150/health`
+
+The API is now running! 🎉
+
 ## Features
 
 - **Books Management**: Create, read, update, and delete books
@@ -130,23 +180,50 @@ You can also create or modify `appsettings.Development.json` to override setting
 
 ### 4. Run the Application
 
+**From the project root directory (`LibraryManagement.Api`):**
+
 ```bash
 dotnet run
 ```
 
-The API will be available at:
-- HTTP: `http://localhost:5000` (or the port shown in the console)
-- HTTPS: `https://localhost:5001` (or the port shown in the console)
+**Or build and run separately:**
+```bash
+dotnet build
+dotnet run --no-build
+```
+
+**The API will be available at:**
+- **HTTP**: `http://localhost:5150`
+- **Swagger UI**: `http://localhost:5150/swagger`
+- **Health Check**: `http://localhost:5150/health`
 
 **Default ports** (can be configured in `Properties/launchSettings.json`):
 - HTTP: `http://localhost:5150`
-- HTTPS: `https://localhost:5151`
+- HTTPS: `https://localhost:5151` (if configured)
 
-Swagger UI will be available at:
-- `http://localhost:5150` (in Development mode, configured as root)
-- `https://localhost:5151` (in Development mode, configured as root)
+**Verify the API is running:**
+1. Open `http://localhost:5150/swagger` in your browser
+2. You should see the Swagger UI with all available endpoints
+3. Try the `GET /api/Books` endpoint to test the connection
 
-**Note**: The Swagger UI is set as the root endpoint in development mode for easy access.
+**Note**: Make sure SQL Server is running before starting the API, otherwise you'll get connection errors.
+
+### Stop the Application
+
+Press `Ctrl+C` in the terminal where the API is running.
+
+### Restart the Application
+
+```bash
+# Stop with Ctrl+C, then:
+dotnet run
+```
+
+Or if you made code changes:
+```bash
+dotnet build
+dotnet run
+```
 
 ## API Endpoints
 
@@ -234,12 +311,51 @@ POST /api/borrowings/return
 }
 ```
 
+## Testing
+
+The project includes comprehensive unit tests using xUnit, Moq, and FluentAssertions.
+
+### Running Tests
+
+```bash
+# Navigate to test project
+cd LibraryManagement.Api.Tests
+
+# Run all tests
+dotnet test
+
+# Run with code coverage
+dotnet test --collect:"XPlat Code Coverage"
+
+# Run with detailed output
+dotnet test --verbosity normal
+```
+
+### Test Coverage
+
+- **Controller Tests**: Full coverage of API endpoints including success, error, and validation scenarios
+- **Service Tests**: Business logic and data access patterns
+- **Code Coverage**: Automatically collected and reported in CI/CD pipeline
+
+See [LibraryManagement.Api.Tests/README.md](../LibraryManagement.Api.Tests/README.md) for more details.
+
+## CI/CD
+
+The project includes GitHub Actions workflows for continuous integration and deployment:
+
+- **CI Pipeline**: Runs tests, builds, and validates Docker images on every push/PR
+- **Docker Publishing**: Automatically builds and publishes Docker images to GitHub Container Registry
+
+See [.github/workflows/README.md](../.github/workflows/README.md) for workflow details.
+
 ## Technology Stack
 
 - **ASP.NET Core 9.0** - Web framework
 - **SQL Server** - Database
 - **Linq2DB** - Lightweight ORM for data access
 - **Swagger/OpenAPI** - API documentation
+- **xUnit** - Testing framework
+- **Docker** - Containerization
 
 ## Project Structure
 
@@ -258,24 +374,52 @@ LibraryManagement.Api/
 
 ### Database Connection Issues
 
-If you encounter connection errors:
+**Symptoms**: 500 errors, "Could not open a connection to SQL Server"
 
-1. **Verify SQL Server is running**:
+**Solutions:**
+
+1. **Check if SQL Server container is running:**
    ```bash
-   # For Docker
    docker ps
-   # Should show sqlserver container running
+   # Should show library-sqlserver or sqlserver container with status "Up"
    ```
 
-2. **Test connection**:
+2. **Start SQL Server if it's stopped:**
    ```bash
-   # For Docker SQL Server
-   docker exec -it sqlserver /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "YourStrong@Passw0rd" -Q "SELECT @@VERSION"
+   docker start library-sqlserver
+   # Or if using different name:
+   docker start sqlserver
    ```
 
-3. **Check connection string**: Ensure the connection string in `appsettings.json` matches your SQL Server configuration
+3. **Wait for SQL Server to be ready:**
+   ```bash
+   docker logs library-sqlserver
+   # Wait until you see "SQL Server is now ready for client connections"
+   ```
 
-4. **Verify database exists**: Make sure you've created the `LibraryManagement` database and run the table creation script
+4. **Verify database and tables exist:**
+   - Connect using SQL Server Management Studio or Azure Data Studio
+   - Server: `localhost,1433`
+   - Username: `sa`
+   - Password: `YourStrong@Passw0rd`
+   - Check if `LibraryManagement` database exists
+   - Check if tables (Books, Authors, Members, Borrowings) exist
+   - If not, run `Scripts/CreateTables.sql`
+
+5. **Check connection string in `appsettings.json`:**
+   ```json
+   {
+     "ConnectionStrings": {
+       "DefaultConnection": "Server=localhost,1433;Database=LibraryManagement;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=true;"
+     }
+   }
+   ```
+
+6. **Restart the API after fixing database issues:**
+   ```bash
+   # Stop with Ctrl+C, then:
+   dotnet run
+   ```
 
 ### Port Already in Use
 

@@ -41,16 +41,16 @@ jobs:
           dotnet-version: '9.0.x'
       
       - name: Restore dependencies
-        run: dotnet restore
-        working-directory: ./backend
+        run: dotnet restore backend/tests/LibraryManagement.Api.Tests.csproj
       
-      - name: Build
-        run: dotnet build --no-restore
-        working-directory: ./backend
+      - name: Build API
+        run: dotnet build --no-restore backend/LibraryManagement.Api.csproj
+      
+      - name: Build tests
+        run: dotnet build --no-restore backend/tests/LibraryManagement.Api.Tests.csproj
       
       - name: Run tests
-        run: dotnet test --no-build --verbosity normal
-        working-directory: ./backend/tests
+        run: dotnet test --no-build --verbosity normal backend/tests/LibraryManagement.Api.Tests.csproj
         env:
           ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=LibraryManagement_Test;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=true;"
       

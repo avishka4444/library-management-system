@@ -12,7 +12,7 @@ This project contains unit tests for the Library Management API using xUnit, Moq
 
 1. **Navigate to the test project:**
    ```bash
-   cd LibraryManagement.Api.Tests
+   cd backend/tests
    ```
 
 2. **Restore NuGet packages:**
@@ -59,7 +59,7 @@ dotnet test
 **Basic test run:**
 ```bash
 # Navigate to test project directory
-cd LibraryManagement.Api.Tests
+cd backend/tests
 
 # Restore packages (first time only)
 dotnet restore
@@ -89,7 +89,7 @@ dotnet test --logger "console;verbosity=detailed"
 **From solution root:**
 ```bash
 # Run tests from the root directory
-dotnet test LibraryManagement.Api.Tests/LibraryManagement.Api.Tests.csproj
+dotnet test backend/tests/LibraryManagement.Api.Tests.csproj
 ```
 
 ### Visual Studio / Rider
@@ -101,7 +101,7 @@ dotnet test LibraryManagement.Api.Tests/LibraryManagement.Api.Tests.csproj
 ## Test Structure
 
 ```
-LibraryManagement.Api.Tests/
+backend/tests/
 ├── Controllers/
 │   └── BooksControllerTests.cs    # Controller unit tests
 ├── Services/

@@ -27,7 +27,7 @@ A RESTful API for managing a library system built with ASP.NET Core, SQL Server,
    ```bash
    # Option 1: Using SQL Server Management Studio or Azure Data Studio
    # Connect to: localhost,1433 | sa | YourStrong@Passw0rd
-   # Run the script: LibraryManagement.Api/Scripts/CreateTables.sql
+   # Run the script: backend/Scripts/CreateTables.sql
    
    # Option 2: Using docker exec (if sqlcmd is available)
    docker exec -i library-sqlserver /opt/mssql-tools/bin/sqlcmd \
@@ -37,7 +37,7 @@ A RESTful API for managing a library system built with ASP.NET Core, SQL Server,
 
 4. **Navigate to project and restore packages:**
    ```bash
-   cd LibraryManagement.Api
+   cd backend
    dotnet restore
    ```
 
@@ -85,7 +85,7 @@ You should see version `9.0.x` or higher. If not, install it from the [.NET down
 ### 2. Navigate to the project directory
 
 ```bash
-cd LibraryManagement.Api
+cd backend
 ```
 
 ### 3. Restore NuGet Packages
@@ -319,7 +319,7 @@ The project includes comprehensive unit tests using xUnit, Moq, and FluentAssert
 
 ```bash
 # Navigate to test project
-cd LibraryManagement.Api.Tests
+cd backend/tests
 
 # Run all tests
 dotnet test
@@ -337,7 +337,7 @@ dotnet test --verbosity normal
 - **Service Tests**: Business logic and data access patterns
 - **Code Coverage**: Automatically collected and reported in CI/CD pipeline
 
-See [LibraryManagement.Api.Tests/README.md](../LibraryManagement.Api.Tests/README.md) for more details.
+See [backend/tests/README.md](./tests/README.md) for more details.
 
 ## CI/CD
 
@@ -360,7 +360,7 @@ See [.github/workflows/README.md](../.github/workflows/README.md) for workflow d
 ## Project Structure
 
 ```
-LibraryManagement.Api/
+backend/
 ├── Controllers/          # API controllers
 ├── Data/                # Database context
 ├── DTOs/                # Data transfer objects

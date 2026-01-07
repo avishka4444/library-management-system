@@ -7,13 +7,13 @@ A modern, responsive library management system built with Vue 3, TypeScript, and
 ### Prerequisites
 - Node.js (v18 or higher)
 - npm or yarn
-- Backend API running (see [Backend README](../LibraryManagement.Api/README.md))
+- Backend API running (see [Backend README](../backend/README.md))
 
 ### Setup and Run (3 minutes)
 
 1. **Navigate to the frontend directory:**
    ```bash
-   cd library-management
+   cd frontend
    ```
 
 2. **Install dependencies:**
@@ -23,7 +23,7 @@ A modern, responsive library management system built with Vue 3, TypeScript, and
 
 3. **Ensure the backend API is running:**
    - The API should be running on `http://localhost:5150`
-   - See [Backend README](../LibraryManagement.Api/README.md) for setup instructions
+   - See [Backend README](../backend/README.md) for setup instructions
 
 4. **Start the development server:**
    ```bash
@@ -56,14 +56,14 @@ Before you begin, ensure you have the following installed:
 
 - **Node.js** (v18 or higher) - [Download Node.js](https://nodejs.org/)
 - **npm** (comes with Node.js) or **yarn**
-- **Backend API** - The Library Management API should be running (see [Backend README](../LibraryManagement.Api/README.md))
+- **Backend API** - The Library Management API should be running (see [Backend README](../backend/README.md))
 
 ## Installation
 
 ### 1. Navigate to the project directory
 
 ```bash
-cd library-management
+cd frontend
 ```
 
 ### 2. Install dependencies
@@ -91,7 +91,7 @@ After installation, you should see a `node_modules` directory created. If you en
 The frontend connects to the backend API. By default, it's configured to connect to:
 - `http://localhost:5150/api`
 
-To change the API URL, create a `.env` file in the `library-management` directory:
+To change the API URL, create a `.env` file in the `frontend` directory:
 
 ```env
 VITE_API_BASE_URL=http://localhost:5150/api
@@ -191,7 +191,7 @@ yarn preview
 ## Project Structure
 
 ```
-library-management/
+frontend/
 ├── src/
 │   ├── components/          # Reusable Vue components
 │   │   ├── AppBar.vue      # Navigation bar
@@ -275,7 +275,7 @@ library-management/
 
 4. **Verify CORS is configured:**
    - Backend should allow `http://localhost:5173`
-   - Check `LibraryManagement.Api/Program.cs` for CORS configuration
+   - Check `backend/Program.cs` for CORS configuration
 
 5. **Check browser console:**
    - Open DevTools (F12)
@@ -285,11 +285,11 @@ library-management/
 6. **Restart both frontend and backend:**
    ```bash
    # Terminal 1 - Backend
-   cd LibraryManagement.Api
+   cd backend
    dotnet run
    
    # Terminal 2 - Frontend
-   cd library-management
+   cd frontend
    npm run dev
    ```
 

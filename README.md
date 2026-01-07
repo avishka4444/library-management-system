@@ -195,6 +195,22 @@ Workflows run on:
 - Pull requests to `main` or `develop` branches
 - Only when relevant files change (path-based triggers)
 
+### Running CI/CD Locally
+
+You can run the CI/CD workflows locally before pushing:
+
+**Backend:**
+```bash
+./scripts/test-backend.sh
+```
+
+**Frontend:**
+```bash
+./scripts/test-frontend.sh
+```
+
+See [scripts/README.md](./scripts/README.md) for detailed instructions and alternative methods (including using `act`).
+
 ## 🛠️ Technology Stack
 
 ### Backend
